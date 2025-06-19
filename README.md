@@ -1,6 +1,6 @@
-# S3 File Upload Service
+# S3 File Storage Service
 
-A simple Go-based file upload service that allows users to upload and download files using AWS S3 storage.
+A simple Go-based file storage service that allows users to upload and download files using AWS S3 storage.
 
 ## Project Structure
 
