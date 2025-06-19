@@ -6,18 +6,23 @@ import (
 )
 
 type Config struct {
-	S3Region    string
-	BucketName  string
-	S3UploadDir string
-	ServerPort  string
+	S3Region      string
+	BucketName    string
+	S3UploadDir   string
+	ServerPort    string
+	MaxFileSizeMB int64
 }
 
 func LoadConfig() (*Config, error) {
+	// Default max file size: 100MB
+	maxFileSizeMB := int64(100)
+
 	config := &Config{
-		S3Region:    os.Getenv("AWS_REGION"),
-		BucketName:  os.Getenv("AWS_S3_BUCKET"),
-		S3UploadDir: "uploads/",
-		ServerPort:  os.Getenv("SERVER_PORT"),
+		S3Region:      os.Getenv("AWS_REGION"),
+		BucketName:    os.Getenv("AWS_S3_BUCKET"),
+		S3UploadDir:   "uploads/",
+		ServerPort:    os.Getenv("SERVER_PORT"),
+		MaxFileSizeMB: maxFileSizeMB,
 	}
 
 	// Validate required configuration
@@ -40,4 +45,5 @@ func (c *Config) PrintConfig() {
 	fmt.Printf("S3 Bucket: %s\n", c.BucketName)
 	fmt.Printf("Upload Directory: %s\n", c.S3UploadDir)
 	fmt.Printf("Server Port: %s\n", c.ServerPort)
+	fmt.Printf("Max File Size: %dMB\n", c.MaxFileSizeMB)
 }

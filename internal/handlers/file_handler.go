@@ -94,9 +94,16 @@ func (h *FileHandler) UploadHandler(c *gin.Context) {
 	}
 	defer file.Close()
 
-	fileSize := float64(header.Size) / 1024 / 1024
+	// Check file size (convert to MB)
+	fileSizeMB := float64(header.Size) / 1024 / 1024
+	if fileSizeMB > 100 { // 100MB limit
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("File too large. Maximum size: 100MB, Received: %.1fMB", fileSizeMB),
+		})
+		return
+	}
 	fmt.Printf("Upload request received - File: %s, Size: %.2f MB, Type: %s\n",
-		header.Filename, fileSize, header.Header.Get("Content-Type"))
+		header.Filename, fileSizeMB, header.Header.Get("Content-Type"))
 
 	// Construct file path in S3
 	s3Key := filepath.Join(h.s3UploadDir, header.Filename)
@@ -120,7 +127,7 @@ func (h *FileHandler) UploadHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "File uploaded successfully",
 		"filename":    header.Filename,
-		"size":        fileSize,
+		"size":        fileSizeMB,
 		"contentType": header.Header.Get("Content-Type"),
 		"s3Key":       s3Key,
 	})
